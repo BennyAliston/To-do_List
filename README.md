@@ -1,34 +1,50 @@
 # To-Do List Application
 
-A modern, feature-rich To-Do List application built with Python and Tkinter. This application allows users to manage their tasks with features like task prioritization, deadlines, search, filtering, and theme customization.
+A modern, feature-rich To-Do List application built with Python and Tkinter. This application helps you stay organized with a clean interface, task prioritization, deadlines, visual statistics, and customizable themes.
 
 ## Features
 
 - **Task Management**
-  - Add, edit, and delete tasks
-  - Set task priorities (Low, Medium, High)
-  - Set deadlines using a calendar widget
+  - Add, edit, and delete tasks with ease
+  - Set task priorities (Low, Medium, High) with color coding
+  - Set deadlines using an integrated calendar widget
   - Mark tasks as complete/incomplete
-  - Sort tasks by different columns
-  - Search and filter tasks
+  - Task categories (Work, Personal, Health, Finance, Other)
+  - Sort tasks by any column (task, deadline, priority, status)
+  - Advanced search and filtering capabilities
+
+- **Dashboard & Analytics**
+  - Visual pie chart showing task completion statistics
+  - Real-time statistics cards (total, completed, pending tasks)
+  - Task distribution by priority visualization
+  - Auto-updating charts that respond to theme changes
 
 - **User Interface**
-  - Modern and clean design
-  - Multiple themes (Light, Dark, Ocean)
-  - Responsive layout
+  - Modern, minimal design with smooth interactions
+  - Three beautiful themes:
+    - **Minimal Light** - Clean, airy, white-on-white aesthetic
+    - **Soothing Dark** - Soft charcoal, easy on the eyes
+    - **Matcha Latte** - Soft pastel aesthetics with green accents
+  - Responsive layout that adapts to window size
   - Tooltips for better usability
-  - Status bar with task statistics
-  - Keyboard shortcuts for quick actions
+  - Status bar with live task statistics
+  - Comprehensive keyboard shortcuts for power users
 
 - **Data Management**
-  - Automatic saving of tasks
-  - JSON file storage
-  - Error handling and data validation
-  - Unique task IDs for reliable task management
+  - Automatic saving of tasks to JSON file
+  - Persistent storage between sessions
+  - Comprehensive error handling and data validation
+  - Unique UUID-based task IDs for reliable management
+  - Safe file operations with error recovery
 
 ## Installation
 
-1. Clone the repository or download the source code
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/BennyAliston/To-do_List.git
+   cd To-do_List
+   ```
+
 2. Install the required dependencies:
    ```bash
    pip install -r requirements.txt
@@ -36,10 +52,10 @@ A modern, feature-rich To-Do List application built with Python and Tkinter. Thi
 
 ## Requirements
 
-- Python 3.x
-- tkinter (usually comes with Python)
-- tkcalendar
-- pillow
+- Python 3.7 or higher
+- tkinter (usually comes pre-installed with Python)
+- tkcalendar >= 1.6.1
+- pillow >= 9.0.0
 
 ## Usage
 
@@ -90,38 +106,61 @@ python To-do.py
 
 ### Themes
 
-- Use the theme dropdown to switch between Light, Dark, and Ocean themes
-- Theme changes are applied immediately
+Switch between three beautiful themes using the theme dropdown:
+- **Minimal Light** - Clean white interface with high contrast elements
+- **Soothing Dark** - Soft dark mode with reduced eye strain
+- **Matcha Latte** - Warm pastel theme with calming green accents
+
+Theme changes apply instantly to all UI elements including charts and dialogs.
 
 ## Code Structure
 
-The application is organized into a single class `TodoApp` with the following main components:
+The application is organized into a single, well-documented `TodoApp` class with the following main components:
 
 1. **Initialization (`__init__`)**
-   - Sets up the main window
-   - Defines themes and styles
-   - Initializes data structures
-   - Creates the user interface
+   - Sets up the main window and configuration
+   - Defines three color themes with comprehensive styling
+   - Initializes data structures for tasks and categories
+   - Creates the complete user interface
 
 2. **UI Components**
-   - Main container with header
-   - Task input section
-   - Search and filter controls
-   - Task list (Treeview)
-   - Status bar
+   - Header with app title and branding
+   - Task input section with deadline picker and priority selector
+   - Search bar and filter controls
+   - Task list (Treeview widget) with sortable columns
+   - Dashboard with statistics cards and pie chart
+   - Status bar with real-time task counters
 
 3. **Core Functionality**
-   - Task management (add, edit, delete)
-   - Data persistence (save/load)
-   - Search and filtering
-   - Sorting
-   - Theme management
+   - Task management (add, edit, delete, toggle completion)
+   - Data persistence (automatic save/load from JSON)
+   - Advanced search and filtering capabilities
+   - Multi-column sorting with visual indicators
+   - Theme management with instant switching
+   - Visual analytics with auto-updating pie charts
 
 4. **Helper Methods**
-   - Task ID management
-   - UI updates
-   - Error handling
-   - Tooltip creation
+   - UUID-based task ID generation and management
+   - Dynamic UI updates and theme application
+   - Comprehensive error handling and user feedback
+   - Tooltip creation for enhanced UX
+   - Statistical calculations for dashboard
+
+## Project Structure
+
+```
+To-do_List/
+├── To-do.py                          # Main application file
+├── tasks.json                         # Task storage (auto-generated)
+├── requirements.txt                   # Python dependencies
+├── README.md                          # Documentation
+├── Multi Platform App work in progress/
+│   ├── main.py                       # Flet-based cross-platform version (WIP)
+│   └── tasks.json                    # Separate task storage for Flet app
+└── Old_version/
+    ├── todo_list.py                  # Legacy version
+    └── tasks.json                    # Legacy task storage
+```
 
 ## Data Storage
 
@@ -141,30 +180,43 @@ Tasks are stored in a JSON file (`tasks.json`) with the following structure:
 ## Error Handling
 
 The application includes comprehensive error handling for:
-- File operations
-- Data validation
-- User input
-- UI operations
-- Theme changes
+- File I/O operations (reading/writing tasks.json)
+- JSON parsing and data validation
+- User input validation (dates, priorities, empty fields)
+- UI operations and widget interactions
+- Theme switching and style application
+- Calendar widget initialization and date selection
+
+## Future Development
+
+The `Multi Platform App work in progress/` folder contains an in-development version using **Flet** framework for true cross-platform deployment (Windows, macOS, Linux, Web, iOS, Android).
 
 ## Contributing
 
-Feel free to contribute to this project by:
-1. Forking the repository
-2. Creating a feature branch
-3. Making your changes
-4. Submitting a pull request
+Contributions are welcome! To contribute:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
 
-This project is open source and available under the MIT License.
+This project is open source and available under the [MIT License](LICENSE).
 
 ## Author
 
-Kritagya Kumar (Benny Aliston)
+**Kritagya Kumar (Benny Aliston)**
+- GitHub: [@BennyAliston](https://github.com/BennyAliston)
 
 ## Acknowledgments
 
-- Tkinter for the GUI framework
-- tkcalendar for the date picker widget
-- Python community for various resources and inspiration 
+- **Tkinter** - Python's standard GUI framework
+- **tkcalendar** - Beautiful calendar widget for date selection
+- **Pillow** - Python Imaging Library for image handling
+- Python community for continuous support and inspiration
+
+---
+
+**Note:** For the latest updates and releases, please visit the [GitHub repository](https://github.com/BennyAliston/To-do_List). 

@@ -1,18 +1,1 @@
-[
-    {
-        "id": "dadfb561-40ea-410e-a3e7-727cc83a01fe",
-        "task": "hello",
-        "deadline": "10-08-2025",
-        "priority": "High",
-        "completed": false,
-        "selected": false
-    },
-    {
-        "id": "04756024-0e44-4f66-8a4e-6bf5a51d8a2d",
-        "task": "hello2",
-        "deadline": "08-07-2025",
-        "priority": "Medium",
-        "completed": false,
-        "selected": false
-    }
-]
+[]

@@ -5,6 +5,7 @@ from tkcalendar import DateEntry
 import json
 import uuid
 import os
+import math
 
 class TodoApp:
     def __init__(self, root):
@@ -20,100 +21,61 @@ class TodoApp:
 
         # Define color themes for the application
         self.themes = {
-            # Light Theme - Modern and clean look
-            'Light': {
-                'bg': '#F8FAFC',
-                'fg': '#334155',
-                'header_bg': '#1E293B',
-                'header_fg': '#F8FAFC',
-                'button_bg': '#3B82F6',
-                'button_fg': '#FFFFFF',
-                'tree_bg': '#FFFFFF',
-                'tree_fg': '#334155',
-                'tree_heading_bg': '#1E293B',
-                'tree_heading_fg': '#F8FAFC',
-                'tree_selected_bg': '#BFDBFE',
-                'status_bg': '#F1F5F9',
-                'status_fg': '#334155',
-                'entry_bg': '#FFFFFF',
-                'entry_fg': '#334155',
-                'entry_select_bg': '#BFDBFE',
-                'entry_select_fg': '#334155',
-                'border_color': '#E2E8F0',
-                'hover_bg': '#EFF6FF',
-                'active_bg': '#DBEAFE',
-                'calendar_bg': '#FFFFFF',
-                'calendar_fg': '#334155',
-                'calendar_header_bg': '#1E293B',
-                'calendar_header_fg': '#F8FAFC',
-                'calendar_select_bg': '#3B82F6',
-                'calendar_select_fg': '#FFFFFF',
-                'calendar_weekend_bg': '#F1F5F9',
-                'calendar_weekend_fg': '#64748B'
+            # Minimal Light - Clean, airy, white-on-white
+            'Minimal Light': {
+                'bg': '#FAFAFA', 'fg': '#333333',
+                'header_bg': '#FAFAFA', 'header_fg': '#111111',
+                'button_bg': '#111111', 'button_fg': '#FFFFFF', # High contrast
+                'tree_bg': '#FFFFFF', 'tree_fg': '#333333',
+                'tree_heading_bg': '#FAFAFA', 'tree_heading_fg': '#111111',
+                'tree_selected_bg': '#F0F0F0',
+                'status_bg': '#FAFAFA', 'status_fg': '#888888',
+                'entry_bg': '#FFFFFF', 'entry_fg': '#333333',
+                'entry_select_bg': '#EEEEEE', 'entry_select_fg': '#333333',
+                'border_color': '#E0E0E0',
+                'hover_bg': '#333333', 'active_bg': '#000000',
+                'calendar_bg': '#FFFFFF', 'calendar_fg': '#333333',
+                'calendar_header_bg': '#FAFAFA', 'calendar_header_fg': '#111111',
+                'calendar_select_bg': '#111111', 'calendar_select_fg': '#FFFFFF',
+                'calendar_weekend_bg': '#FAFAFA', 'calendar_weekend_fg': '#888888'
             },
 
-            # Dark Theme - Easy on eyes in low light
-            'Dark': {
-                'bg': '#0F172A',
-                'fg': '#E2E8F0',
-                'header_bg': '#1E293B',
-                'header_fg': '#F8FAFC',
-                'button_bg': '#3B82F6',
-                'button_fg': '#FFFFFF',
-                'tree_bg': '#1E293B',
-                'tree_fg': '#E2E8F0',
-                'tree_heading_bg': '#334155',
-                'tree_heading_fg': '#F8FAFC',
-                'tree_selected_bg': '#2563EB',
-                'status_bg': '#1E293B',
-                'status_fg': '#E2E8F0',
-                'entry_bg': '#1E293B',
-                'entry_fg': '#E2E8F0',
-                'entry_select_bg': '#2563EB',
-                'entry_select_fg': '#FFFFFF',
-                'border_color': '#334155',
-                'hover_bg': '#2563EB',
-                'active_bg': '#1D4ED8',
-                'calendar_bg': '#1E293B',
-                'calendar_fg': '#E2E8F0',
-                'calendar_header_bg': '#334155',
-                'calendar_header_fg': '#F8FAFC',
-                'calendar_select_bg': '#3B82F6',
-                'calendar_select_fg': '#FFFFFF',
-                'calendar_weekend_bg': '#0F172A',
-                'calendar_weekend_fg': '#94A3B8'
+            # Soothing Dark - Soft charcoal, easier on eyes
+            'Soothing Dark': {
+                'bg': '#222222', 'fg': '#E0E0E0',
+                'header_bg': '#222222', 'header_fg': '#FFFFFF',
+                'button_bg': '#404040', 'button_fg': '#FFFFFF',
+                'tree_bg': '#2C2C2C', 'tree_fg': '#E0E0E0',
+                'tree_heading_bg': '#1A1A1A', 'tree_heading_fg': '#E0E0E0', # Darker header
+                'tree_selected_bg': '#404040',
+                'status_bg': '#222222', 'status_fg': '#999999',
+                'entry_bg': '#2C2C2C', 'entry_fg': '#E0E0E0',
+                'entry_select_bg': '#404040', 'entry_select_fg': '#E0E0E0',
+                'border_color': '#404040',
+                'hover_bg': '#505050', 'active_bg': '#606060',
+                'calendar_bg': '#2C2C2C', 'calendar_fg': '#E0E0E0',
+                'calendar_header_bg': '#222222', 'calendar_header_fg': '#E0E0E0',
+                'calendar_select_bg': '#404040', 'calendar_select_fg': '#FFFFFF',
+                'calendar_weekend_bg': '#222222', 'calendar_weekend_fg': '#999999'
             },
 
-            # Ocean Theme - Calming blue-based palette
-            'Ocean': {
-                'bg': '#F0F9FF',
-                'fg': '#0C4A6E',
-                'header_bg': '#0369A1',
-                'header_fg': '#F0F9FF',
-                'button_bg': '#0EA5E9',
-                'button_fg': '#FFFFFF',
-                'tree_bg': '#FFFFFF',
-                'tree_fg': '#0C4A6E',
-                'tree_heading_bg': '#0369A1',
-                'tree_heading_fg': '#F0F9FF',
-                'tree_selected_bg': '#BAE6FD',
-                'status_bg': '#E0F2FE',
-                'status_fg': '#0C4A6E',
-                'entry_bg': '#FFFFFF',
-                'entry_fg': '#0C4A6E',
-                'entry_select_bg': '#BAE6FD',
-                'entry_select_fg': '#0C4A6E',
-                'border_color': '#E0F2FE',
-                'hover_bg': '#E0F2FE',
-                'active_bg': '#BAE6FD',
-                'calendar_bg': '#FFFFFF',
-                'calendar_fg': '#0C4A6E',
-                'calendar_header_bg': '#0369A1',
-                'calendar_header_fg': '#F0F9FF',
-                'calendar_select_bg': '#0EA5E9',
-                'calendar_select_fg': '#FFFFFF',
-                'calendar_weekend_bg': '#F0F9FF',
-                'calendar_weekend_fg': '#0369A1'
+            # Matcha Latte - Soft pastel aesthetics
+            'Matcha Latte': {
+                'bg': '#FDFCF0', 'fg': '#433E3F',
+                'header_bg': '#FDFCF0', 'header_fg': '#433E3F',
+                'button_bg': '#A0C1B8', 'button_fg': '#FFFFFF',
+                'tree_bg': '#FFFFFF', 'tree_fg': '#433E3F',
+                'tree_heading_bg': '#FDFCF0', 'tree_heading_fg': '#5C5455',
+                'tree_selected_bg': '#E8F3F1',
+                'status_bg': '#FDFCF0', 'status_fg': '#8A8182',
+                'entry_bg': '#FFFFFF', 'entry_fg': '#433E3F',
+                'entry_select_bg': '#E8F3F1', 'entry_select_fg': '#433E3F',
+                'border_color': '#D4EBE6',
+                'hover_bg': '#8FB0A7', 'active_bg': '#7E9F96',
+                'calendar_bg': '#FFFFFF', 'calendar_fg': '#433E3F',
+                'calendar_header_bg': '#FDFCF0', 'calendar_header_fg': '#5C5455',
+                'calendar_select_bg': '#A0C1B8', 'calendar_select_fg': '#FFFFFF',
+                'calendar_weekend_bg': '#FAF9EB', 'calendar_weekend_fg': '#8A8182'
             }
         }
 
@@ -121,7 +83,8 @@ class TodoApp:
         self.tasks = []  # List to store all tasks
         self.sort_column = 'deadline'  # Default sort column
         self.sort_order = True  # True for ascending, False for descending
-        self.current_theme = 'Light'  # Default theme
+        self.categories = ["Work", "Personal", "Health", "Finance", "Other"] # Default categories
+        self.current_theme = 'Minimal Light'  # Default theme
         
         # Configure the base style
         self.style.theme_use('clam')
@@ -137,7 +100,12 @@ class TodoApp:
         
         # Load existing tasks and update display
         self.load_tasks()
+        # Load existing tasks and update display
+        self.load_tasks()
         self.update_status()
+
+        # Initial dashboard update
+        self.update_dashboard()
 
         # Setup keyboard shortcuts
         self.root.bind('<Control-n>', lambda e: self.task_entry.focus())  # New task shortcut
@@ -198,6 +166,7 @@ class TodoApp:
         task_text = self.task_entry.get().strip()
         deadline_str = self.cal.get_date().strftime("%d-%m-%Y")
         priority = self.priority_combo.get()
+        category = self.category_combo.get()
 
         # Validate task text
         if not task_text:
@@ -220,6 +189,7 @@ class TodoApp:
             'task': task_text,
             'deadline': deadline_str,
             'priority': priority,
+            'category': category,
             'completed': False
         }
 
@@ -229,32 +199,41 @@ class TodoApp:
         self.clear_inputs()
         self.update_treeview()
         self.update_status()
+        self.update_dashboard()
 
     def configure_styles(self):
         """Configure and apply the current theme styles to all widgets"""
         theme = self.themes[self.current_theme]
+        
+        # Define common fonts - slightly larger for readability
+        base_font = ('Segoe UI', 11)
+        bold_font = ('Segoe UI', 11, 'bold')
+        header_font = ('Segoe UI', 18, 'bold')
 
         # Configure basic widget styles
-        self.style.configure('.', background=theme['bg'], foreground=theme['fg'], font=('Segoe UI', 10))
+        self.style.configure('.', background=theme['bg'], foreground=theme['fg'], font=base_font)
         self.style.configure('TFrame', background=theme['bg'])
-        self.style.configure('TLabel', background=theme['bg'], foreground=theme['fg'], font=('Segoe UI', 10))
+        self.style.configure('TLabel', background=theme['bg'], foreground=theme['fg'], font=base_font)
         
-        # Configure Entry widget styles with focus effects
+        # Configure Entry widget styles - Minimal flat look
         self.style.configure('TEntry', 
             fieldbackground=theme['entry_bg'], 
             foreground=theme['entry_fg'], 
             insertcolor=theme['fg'],  # Cursor color
-            selectbackground=theme['entry_select_bg'],  # Selection highlight
+            selectbackground=theme['entry_select_bg'],
             selectforeground=theme['entry_select_fg'], 
             borderwidth=1, 
-            relief='solid', 
+            relief='solid',
+            bordercolor=theme['border_color'], # Subtle border
             padding=8
         )
         self.style.map('TEntry', 
-            bordercolor=[('focus', theme['button_bg']), ('!focus', theme['border_color'])]
+            bordercolor=[('focus', theme['fg']), ('!focus', theme['border_color'])],
+            lightcolor=[('focus', theme['fg']), ('!focus', theme['border_color'])],
+            darkcolor=[('focus', theme['fg']), ('!focus', theme['border_color'])]
         )
 
-        # Configure Combobox styles with states
+        # Configure Combobox styles - Minimal
         self.style.configure('TCombobox', 
             fieldbackground=theme['entry_bg'],
             foreground=theme['entry_fg'],
@@ -267,38 +246,33 @@ class TodoApp:
             arrowcolor=theme['fg']
         )
         
-        # Map Combobox states (readonly, active, etc.)
+        # Map Combobox states
         self.style.map('TCombobox',
             fieldbackground=[('readonly', theme['entry_bg'])],
             selectbackground=[('readonly', theme['entry_select_bg'])],
             selectforeground=[('readonly', theme['entry_select_fg'])],
-            background=[('readonly', theme['entry_bg']), ('active', theme['hover_bg'])],
+            background=[('readonly', theme['entry_bg'])],
             foreground=[('readonly', theme['entry_fg'])],
-            bordercolor=[('focus', theme['button_bg']), ('!focus', theme['border_color'])]
+            bordercolor=[('focus', theme['fg']), ('!focus', theme['border_color'])]
         )
 
-        # Configure priority-specific styles with different colors
+        # Configure priority-specific styles (Softer colors)
         priority_colors = {
-            'Low': '#10B981',    # Green
-            'Medium': '#F59E0B',  # Orange
-            'High': '#EF4444'    # Red
+            'Low': '#34D399',    # Softer Green
+            'Medium': '#FBBF24',  # Softer Orange
+            'High': '#F87171'    # Softer Red
         }
         
-        # Create styles for each priority level
         for priority, color in priority_colors.items():
             style_name = f'Priority.{priority}.TCombobox'
             try:
                 self.style.configure(style_name, foreground=color)
             except tk.TclError:
-                # Handle style creation for complex widgets
-                base_settings = self.style.layout('TCombobox')
-                element_options = self.style.element_options('TCombobox.field')
-                self.style.layout(style_name, base_settings)
-                self.style.configure(style_name, foreground=color, **element_options)
+                pass
 
         # Configure filter combobox style
         self.style.configure('Filter.TCombobox',
-            font=('Segoe UI', 10),
+            font=base_font,
             fieldbackground=theme['entry_bg'],
             foreground=theme['entry_fg'],
             padding=8,
@@ -307,47 +281,54 @@ class TodoApp:
             arrowcolor=theme['fg']
         )
         self.style.map('Filter.TCombobox',
-            bordercolor=[('focus', theme['button_bg']), ('!focus', theme['border_color'])]
+            bordercolor=[('focus', theme['fg']), ('!focus', theme['border_color'])]
         )
 
-        # Configure button styles with hover effects
+        # Configure button styles - Flat and Minimal
         self.style.configure('TButton',
-            font=('Segoe UI', 10, 'bold'),
-            padding=(15, 8),
+            font=bold_font,
+            padding=(20, 10), # More padding for "chunky" aesthetic help
             background=theme['button_bg'],
             foreground=theme['button_fg'],
             borderwidth=0,
-            relief='flat'
+            relief='flat',
+            focusthickness=0
         )
         self.style.map('TButton',
             background=[('active', theme['active_bg']), ('pressed', theme['active_bg'])],
             foreground=[('active', theme['button_fg']), ('pressed', theme['button_fg'])]
         )
 
-        # Configure header styles
+        # Configure header styles - Clean, no block background
         self.style.configure('Header.TFrame', background=theme['header_bg'])
         self.style.configure('Header.TLabel',
             background=theme['header_bg'],
             foreground=theme['header_fg'],
-            font=('Segoe UI', 16, 'bold'),
-            padding=20
+            font=header_font,
+            padding=(0, 20) # Vertical spacing
+        )
+        
+        # Configure Dashboard Card Title
+        self.style.configure('CardTitle.TLabel',
+            background=theme['bg'],
+            foreground=theme['fg'],
+            font=('Segoe UI', 12)
         )
 
-        # Configure Treeview styles for task list
+        # Configure Treeview styles - Airy and minimal
         self.style.configure('Treeview',
-            font=('Segoe UI', 10),
-            rowheight=35,
+            font=base_font,
+            rowheight=45, # Significantly larger rows
             fieldbackground=theme['tree_bg'],
             background=theme['tree_bg'],
             foreground=theme['tree_fg'],
-            borderwidth=1,
-            relief='solid',
-            bordercolor=theme['border_color']
+            borderwidth=0, # No border
+            relief='flat'
         )
         
-        # Configure Treeview header and selection styles
+        # Configure Treeview header
         self.style.configure('Treeview.Heading',
-            font=('Segoe UI', 10, 'bold'),
+            font=bold_font,
             background=theme['tree_heading_bg'],
             foreground=theme['tree_heading_fg'],
             relief='flat',
@@ -356,8 +337,7 @@ class TodoApp:
         )
         self.style.map('Treeview',
             background=[('selected', theme['tree_selected_bg'])],
-            foreground=[('selected', theme['tree_fg'])],
-            bordercolor=[('focus', theme['button_bg']), ('!focus', theme['border_color'])]
+            foreground=[('selected', theme['tree_fg'])]
         )
 
         # Configure checkbox style
@@ -365,10 +345,10 @@ class TodoApp:
             background=theme['bg'],
             foreground=theme['fg'],
             padding=5,
-            font=('Segoe UI', 10)
+            font=base_font
         )
         self.style.map('TCheckbutton',
-            background=[('active', theme['hover_bg'])],
+            background=[('active', theme['bg'])], # No hover background change
             foreground=[('active', theme['fg'])]
         )
 
@@ -381,46 +361,29 @@ class TodoApp:
             font=('Segoe UI', 9)
         )
 
-        # Apply styles to existing widgets if they exist
-        if hasattr(self, 'task_entry'):
+        # Configure Notebook (Tabs) - Minimal
+        self.style.configure('TNotebook', background=theme['bg'], borderwidth=0)
+        self.style.configure('TNotebook.Tab', 
+            background=theme['bg'], 
+            foreground=theme['fg'],
+            padding=(20, 10),
+            font=base_font,
+            borderwidth=0
+        )
+        self.style.map('TNotebook.Tab',
+            background=[('selected', theme['button_bg'])],
+            foreground=[('selected', theme['button_fg'])],
+            expand=[('selected', [0, 0, 0, 0])] # No expansion effect
+        )
+
+        # Apply styles to existing widgets recursively
+        if hasattr(self, 'root'):
             self.root.configure(bg=theme['bg'])
-            for widget in self.root.winfo_children():
-                try:
-                    # Update top-level frames first
-                    if isinstance(widget, ttk.Frame):
-                        widget_style = widget.cget('style')
-                        if widget_style:
-                            widget.configure(style=widget_style)
-                        else:
-                            widget.configure(style='TFrame')
+            self._apply_theme_recursive(self.root, theme)
 
-                    # Update children recursively
-                    for child in widget.winfo_children():
-                        try:
-                            child_style = child.cget('style')
-                            if child_style:
-                                child.configure(style=child_style)
-                            elif isinstance(child, tk.Canvas):
-                                child.configure(bg=theme['bg'], highlightthickness=0)
-                        except tk.TclError:
-                            pass
-                except Exception:
-                    continue
-
-            # Re-apply specific styles if widgets exist
+            # Re-apply specific tweaks
             try:
-                if hasattr(self, 'task_entry'):
-                    self.task_entry.configure(style='TEntry')
-                if hasattr(self, 'search_entry'):
-                    self.search_entry.configure(style='TEntry')
-                if hasattr(self, 'filter_combo'):
-                    self.filter_combo.configure(style='Filter.TCombobox')
-                if hasattr(self, 'theme_combo'):
-                    self.theme_combo.configure(style='Filter.TCombobox')
-                if hasattr(self, 'priority_combo'):
-                    self.update_priority_style()
-                if hasattr(self, 'status_bar'):
-                    self.status_bar.configure(style='Status.TLabel')
+                if hasattr(self, 'header_frame'): self.header_frame.configure(style='Header.TFrame')
                 if hasattr(self, 'cal'):
                     self.cal.configure(
                         background=theme['calendar_bg'], foreground=theme['calendar_fg'],
@@ -431,20 +394,59 @@ class TodoApp:
                         weekendbackground=theme['calendar_weekend_bg'], weekendforeground=theme['calendar_weekend_fg'],
                         othermonthbackground=theme['calendar_bg'], othermonthwebackground=theme['calendar_bg'],
                         othermonthforeground=theme['calendar_fg'], othermonthweforeground=theme['calendar_fg'],
-                        tooltipforeground=theme['fg'], tooltipbackground=theme['bg'],
-                        arrowcolor=theme['calendar_header_fg'],
-                        relief='solid', borderwidth=1
+
+
                     )
-                if hasattr(self, 'tree'):
-                    self.tree.configure(style='Treeview')
-                    self.tree.heading('#0', text='')
+                # Force chart canvas update if it exists
+                if hasattr(self, 'chart_canvas'):
+                     self.chart_canvas.configure(bg=theme['bg'])
+                     self.draw_pie_chart() # Redraw to update text colors
+                     
             except Exception as e:
                 print(f"Error applying styles: {e}")
 
+    def _apply_theme_recursive(self, widget, theme):
+        """Helper to recursively apply theme colors to all widgets"""
+        try:
+            # Update TFrame styles
+            if isinstance(widget, ttk.Frame):
+                # Don't overwrite specific styles like Header.TFrame if they are already set
+                current_style = widget.cget('style')
+                if not current_style or current_style == 'TFrame':
+                     widget.configure(style='TFrame')
+            
+            # Update Canvas background
+            elif isinstance(widget, tk.Canvas):
+                widget.configure(bg=theme['bg'], highlightthickness=0)
+            
+            # Recurse to children
+            for child in widget.winfo_children():
+                self._apply_theme_recursive(child, theme)
+        except Exception:
+            pass
+
     def create_ui(self):
         """Create and configure the main user interface components"""
-        # Main container with padding
-        main_container = ttk.Frame(self.root, style='TFrame')
+        # Create Notebook for tabs
+        self.notebook = ttk.Notebook(self.root)
+        self.notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        # Tasks Tab
+        self.tasks_frame = ttk.Frame(self.notebook, style='TFrame')
+        self.notebook.add(self.tasks_frame, text='   Tasks   ')
+        self.create_tasks_view(self.tasks_frame)
+
+        # Dashboard Tab
+        self.dashboard_frame = ttk.Frame(self.notebook, style='TFrame')
+        self.notebook.add(self.dashboard_frame, text='   Dashboard   ')
+        self.create_dashboard_view(self.dashboard_frame)
+
+        # Bind tab change to update dashboard
+        self.notebook.bind('<<NotebookTabChanged>>', lambda e: self.update_dashboard())
+
+    def create_tasks_view(self, parent):
+        # Main container inside the tab
+        main_container = ttk.Frame(parent, style='TFrame')
         main_container.pack(fill=tk.BOTH, expand=True, padx=20, pady=15)
 
         # Header section with app title
@@ -471,43 +473,52 @@ class TodoApp:
         ttk.Label(input_frame, text="Task:", style='TLabel', 
                  font=('Segoe UI', 10, 'bold')).grid(row=0, column=0, padx=(0, 10), pady=5, sticky='w')
         self.task_entry = ttk.Entry(input_frame, width=60, style='TEntry')
-        self.task_entry.grid(row=0, column=1, columnspan=3, padx=5, pady=5, sticky='ew')
+        self.task_entry.grid(row=0, column=1, columnspan=7, padx=5, pady=5, sticky='ew')
         
         # Bind task entry events
-        self.task_entry.bind('<Return>', lambda event: self.add_task())  # Enter to add task
-        self.task_entry.bind('<Escape>', lambda event: self.clear_inputs())  # Escape to clear
+        self.task_entry.bind('<Return>', lambda event: self.add_task())
+        self.task_entry.bind('<Escape>', lambda event: self.clear_inputs())
         self.create_tooltip(self.task_entry, "Enter task, press Enter to add")
 
-        # Deadline input with calendar
+        # Row 1: Deadline, Category, Priority
+        # Deadline input
         ttk.Label(input_frame, text="Deadline:", style='TLabel', 
                  font=('Segoe UI', 10, 'bold')).grid(row=1, column=0, padx=(0, 10), pady=5, sticky='w')
-        self.cal = DateEntry(input_frame, date_pattern='dd-mm-yyyy', width=15, style='TEntry')
+        self.cal = DateEntry(input_frame, date_pattern='dd-mm-yyyy', width=12, style='TEntry')
         self.cal.grid(row=1, column=1, padx=5, pady=5, sticky='w')
-        self.cal.set_date(date.today())  # Set default to today
+        self.cal.set_date(date.today())
         self.create_tooltip(self.cal, "Select task deadline")
 
-        # Priority selection dropdown
-        ttk.Label(input_frame, text="Priority:", style='TLabel', 
+        # Category input
+        ttk.Label(input_frame, text="Category:", style='TLabel', 
                  font=('Segoe UI', 10, 'bold')).grid(row=1, column=2, padx=(20, 10), pady=5, sticky='w')
+        self.category_combo = ttk.Combobox(input_frame, values=self.categories, 
+                                        width=12, state='readonly')
+        self.category_combo.grid(row=1, column=3, padx=5, pady=5, sticky='w')
+        self.category_combo.set("General")
+        if "General" not in self.categories: self.category_combo.set(self.categories[0])
+        self.create_tooltip(self.category_combo, "Select task category")
+
+        # Priority selection
+        ttk.Label(input_frame, text="Priority:", style='TLabel', 
+                 font=('Segoe UI', 10, 'bold')).grid(row=1, column=4, padx=(20, 10), pady=5, sticky='w')
         self.priority_combo = ttk.Combobox(input_frame, values=["Low", "Medium", "High"], 
-                                         width=15, state='readonly')
-        self.priority_combo.grid(row=1, column=3, padx=5, pady=5, sticky='w')
-        self.priority_combo.set("Medium")  # Set default priority
-        self.update_priority_style()  # Apply priority-specific styling
+                                         width=12, state='readonly')
+        self.priority_combo.grid(row=1, column=5, padx=5, pady=5, sticky='w')
+        self.priority_combo.set("Medium")
+        self.update_priority_style()
         self.priority_combo.bind("<<ComboboxSelected>>", self.update_priority_style)
         self.create_tooltip(self.priority_combo, "Set task priority level")
 
         # Add task button
-        button_row = ttk.Frame(input_frame, style='TFrame')
-        button_row.grid(row=2, column=0, columnspan=4, pady=(10, 0))
-        add_button = ttk.Button(button_row, text="Add Task", command=self.add_task, style='TButton')
-        add_button.pack()
+        add_button = ttk.Button(input_frame, text="Add Task", command=self.add_task, style='TButton')
+        add_button.grid(row=1, column=6, padx=(20, 0), pady=5)
         self.create_tooltip(add_button, "Add new task (Ctrl+N)")
 
         # Search and filter controls section
         controls_frame = ttk.Frame(main_container, style='TFrame')
         controls_frame.pack(fill=tk.X, pady=(10, 15))
-        controls_frame.columnconfigure(1, weight=1)  # Make search entry expandable
+        controls_frame.columnconfigure(1, weight=1)
 
         # Search box
         ttk.Label(controls_frame, text="Search:", style='TLabel', 
@@ -515,21 +526,20 @@ class TodoApp:
         self.search_entry = ttk.Entry(controls_frame, style='TEntry')
         self.search_entry.grid(row=0, column=1, padx=5, pady=5, sticky='ew')
         
-        # Bind search events
-        self.search_entry.bind('<KeyRelease>', lambda e: self.update_treeview())  # Live search
+        self.search_entry.bind('<KeyRelease>', lambda e: self.update_treeview())
         self.search_entry.bind('<Escape>', lambda e: [self.search_entry.delete(0, tk.END), 
-                                                    self.update_treeview()])  # Clear search
+                                                    self.update_treeview()])
         self.create_tooltip(self.search_entry, "Search tasks (Ctrl+F)\nPress Esc to clear")
 
         # Filter dropdown
         ttk.Label(controls_frame, text="Filter:", style='TLabel', 
                  font=('Segoe UI', 10, 'bold')).grid(row=0, column=2, padx=(20, 10), pady=5, sticky='w')
-        self.filter_combo = ttk.Combobox(controls_frame, values=["All", "Completed", "Pending"], 
+        self.filter_combo = ttk.Combobox(controls_frame, values=["All", "Completed", "Pending"] + self.categories, 
                                        width=12, state='readonly', style='Filter.TCombobox')
         self.filter_combo.grid(row=0, column=3, padx=5, pady=5, sticky='w')
-        self.filter_combo.set("All")  # Default to showing all tasks
+        self.filter_combo.set("All")
         self.filter_combo.bind("<<ComboboxSelected>>", lambda e: self.update_treeview())
-        self.create_tooltip(self.filter_combo, "Filter tasks by status")
+        self.create_tooltip(self.filter_combo, "Filter tasks by status or category")
 
         # Theme section
         ttk.Label(controls_frame, text="Theme:", style='TLabel', font=('Segoe UI', 10, 'bold')).grid(row=0, column=4, padx=(20, 10), pady=5, sticky='w')
@@ -539,29 +549,28 @@ class TodoApp:
         self.theme_combo.bind("<<ComboboxSelected>>", self.change_theme)
         self.create_tooltip(self.theme_combo, "Change application theme")
 
-        # Action buttons Frame (Remove Button Only Now)
+        # Action buttons Frame
         button_frame = ttk.Frame(main_container, style='TFrame')
-        button_frame.pack(fill=tk.X, pady=(0, 10)) # Place below controls
+        button_frame.pack(fill=tk.X, pady=(0, 10))
 
-        # FIX: Removed redundant Search button
         remove_button = ttk.Button(button_frame, text="Remove Selected", command=self.remove_task, style='TButton')
-        remove_button.pack(side=tk.RIGHT, padx=5) # Align right
+        remove_button.pack(side=tk.RIGHT, padx=5)
         self.create_tooltip(remove_button, "Delete selected tasks (Delete Key)")
 
-
         # Treeview section
-        tree_frame = ttk.Frame(main_container) # No specific style needed, will contain treeview+scrollbar
+        tree_frame = ttk.Frame(main_container)
         tree_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
 
-        columns = ('task', 'deadline', 'priority', 'completed')
+        columns = ('task', 'category', 'deadline', 'priority', 'completed')
         self.tree = ttk.Treeview(tree_frame, columns=columns, show='headings', style='Treeview')
 
         # Set column widths and headings
-        col_widths = {'task': 350, 'deadline': 100, 'priority': 80, 'completed': 80} # Adjusted widths
-        col_anchors = {'task': 'w', 'deadline': 'center', 'priority': 'center', 'completed': 'center'} # Anchor task left
+        col_widths = {'task': 300, 'category': 100, 'deadline': 100, 'priority': 80, 'completed': 80}
+        col_anchors = {'task': 'w', 'category': 'center', 'deadline': 'center', 'priority': 'center', 'completed': 'center'}
+        
         for col in columns:
-            self.tree.heading(col, text=col.capitalize(), command=lambda c=col: self.sort_tasks(c), anchor='center') # Keep heading centered
-            self.tree.column(col, width=col_widths.get(col, 100), anchor=col_anchors.get(col, 'center'), stretch=tk.YES if col=='task' else tk.NO) # Allow task column to stretch
+            self.tree.heading(col, text=col.capitalize(), command=lambda c=col: self.sort_tasks(c), anchor='center')
+            self.tree.column(col, width=col_widths.get(col, 100), anchor=col_anchors.get(col, 'center'), stretch=tk.YES if col=='task' else tk.NO)
 
         # Add scrollbar
         vsb = ttk.Scrollbar(tree_frame, orient="vertical", command=self.tree.yview)
@@ -569,16 +578,123 @@ class TodoApp:
         self.tree.configure(yscrollcommand=vsb.set)
 
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        self.tree.bind('<Double-1>', self.edit_task_event) # MODIFIED: Renamed event handler
-        self.tree.bind('<Delete>', lambda e: self.remove_task()) # Already bound globally, but keep for explicitness
-        self.create_tooltip(self.tree, "Double-click to edit\nRight-click for options\nDelete key to remove")
-
+        self.tree.bind('<Double-1>', self.edit_task_event)
+        self.tree.bind('<Delete>', lambda e: self.remove_task())
+        self.create_tooltip(self.tree, "Double-click to edit\nRight-click for options")
 
         # Status bar
-        self.status_bar = ttk.Label(main_container, text="Status Bar", style='Status.TLabel', anchor='w') # Apply style, anchor left
+        self.status_bar = ttk.Label(main_container, text="Status Bar", style='Status.TLabel', anchor='w')
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X, pady=(10, 0))
         self.status_bar.bind('<Enter>', self.show_status_tooltip)
         self.status_bar.bind('<Leave>', self.hide_status_tooltip)
+
+    def create_dashboard_view(self, parent):
+        """Create the dashboard view with statistics"""
+        # Top Stats Row
+        stats_frame = ttk.Frame(parent, style='TFrame')
+        stats_frame.pack(fill=tk.X, padx=20, pady=20)
+        
+        # Helper to create stat cards
+        def create_card(parent, title, value_var, color):
+            card = ttk.Frame(parent, style='TFrame', relief='solid', borderwidth=1)
+            card.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10)
+            
+            lbl_title = ttk.Label(card, text=title, style='CardTitle.TLabel')
+            lbl_title.pack(pady=(10, 5))
+            
+            lbl_value = ttk.Label(card, textvariable=value_var, font=('Segoe UI', 24, 'bold'), foreground=color)
+            lbl_value.pack(pady=(0, 10))
+            return card
+
+        self.stat_total = tk.StringVar(value="0")
+        self.stat_pending = tk.StringVar(value="0")
+        self.stat_overdue = tk.StringVar(value="0")
+
+        create_card(stats_frame, "Total Tasks", self.stat_total, "#3B82F6")
+        create_card(stats_frame, "Pending", self.stat_pending, "#F59E0B")
+        create_card(stats_frame, "Overdue/Today", self.stat_overdue, "#EF4444")
+
+        # Charts Section
+        charts_frame = ttk.Frame(parent, style='TFrame')
+        charts_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
+
+        # Pie Chart Canvas
+        self.chart_canvas = tk.Canvas(charts_frame, bg=self.themes[self.current_theme]['bg'], highlightthickness=0)
+        self.chart_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        # Bind resize event to redraw chart
+        self.chart_canvas.bind('<Configure>', lambda e: self.draw_pie_chart())
+
+    def update_dashboard(self):
+        """Recalculate stats and update dashboard"""
+        if not hasattr(self, 'stat_total'): return
+
+        total = len(self.tasks)
+        pending = sum(1 for t in self.tasks if not t.get('completed', False))
+        completed = total - pending
+        
+        today = date.today()
+        overdue_or_today = 0
+        for t in self.tasks:
+            if not t.get('completed', False):
+                try:
+                    d = datetime.strptime(t.get('deadline', ''), "%d-%m-%Y").date()
+                    if d <= today:
+                        overdue_or_today += 1
+                except: pass
+
+        self.stat_total.set(str(total))
+        self.stat_pending.set(str(pending))
+        self.stat_overdue.set(str(overdue_or_today))
+
+        # Redraw chart if dashboard is visible
+        if self.notebook.select() == str(self.dashboard_frame):
+            self.draw_pie_chart()
+
+    def draw_pie_chart(self):
+        """Draw a simple pie chart of task status"""
+        if not hasattr(self, 'chart_canvas'): return
+        
+        self.chart_canvas.delete("all")
+        width = self.chart_canvas.winfo_width()
+        height = self.chart_canvas.winfo_height()
+        
+        if width < 50 or height < 50: return
+
+        total = len(self.tasks)
+        if total == 0:
+            self.chart_canvas.create_text(width/2, height/2, text="No Tasks Available", fill=self.themes[self.current_theme]['fg'], font=('Segoe UI', 14))
+            return
+
+        completed_count = sum(1 for t in self.tasks if t.get('completed', False))
+        pending_count = total - completed_count
+        
+        angles = []
+        if completed_count > 0: angles.append((completed_count/total * 360, "#10B981", "Completed")) # Green
+        if pending_count > 0: angles.append((pending_count/total * 360, "#F59E0B", "Pending")) # Orange
+
+        # Draw Pie
+        x, y, r = width/2, height/2, min(width, height)/3
+        start_angle = 90
+        
+        for angle, color, label in angles:
+            extent = angle
+            self.chart_canvas.create_arc(x-r, y-r, x+r, y+r, start=start_angle, extent=extent, fill=color, outline=self.themes[self.current_theme]['bg'])
+            
+            # Draw label logic (simplified)
+            mid_angle = start_angle + extent/2
+            lab_x = x + (r + 40) * math.cos(math.radians(mid_angle))
+            lab_y = y - (r + 40) * math.sin(math.radians(mid_angle))
+            text = f"{label} ({int(extent/360*100)}%)"
+            
+            # Adjust label position to not overlap too much
+            anchor = 'center'
+            if lab_x < x: anchor = 'e'
+            elif lab_x > x: anchor = 'w'
+            
+            self.chart_canvas.create_text(lab_x, lab_y, text=text, fill=self.themes[self.current_theme]['fg'], font=('Segoe UI', 10, 'bold'), anchor=anchor)
+            
+            start_angle += extent
 
     # Tooltip creation helper (remains mostly the same)
     def create_tooltip(self, widget, text):
@@ -757,14 +873,17 @@ class TodoApp:
             # Ensure task has an ID
             task_id = task.get('id')
             if not task_id:
-                print(f"Warning: Task missing ID during Treeview update: {task.get('task')}")
                 continue
 
             task_completed = task.get('completed', False)
+            task_category = task.get('category', 'General')
 
-            # Apply status filter (All, Completed, Pending)
-            if (current_filter == "Completed" and not task_completed) or \
-               (current_filter == "Pending" and task_completed):
+            # Apply status filter (All, Completed, Pending, or Category)
+            if current_filter == "Completed" and not task_completed:
+                continue
+            elif current_filter == "Pending" and task_completed:
+                continue
+            elif current_filter in self.categories and task_category != current_filter:
                 continue
 
             # Apply search filter across all fields
@@ -772,15 +891,18 @@ class TodoApp:
                 task_text = task.get('task', '').lower()
                 task_deadline = task.get('deadline', '').lower()
                 task_priority = task.get('priority', '').lower()
+                task_cat_lower = task_category.lower()
                 if not (search_query in task_text or
                         search_query in task_deadline or
-                        search_query in task_priority):
+                        search_query in task_priority or
+                        search_query in task_cat_lower):
                     continue
 
             # Prepare values for display
             display_completed = '✓' if task_completed else '✗'
             display_values = (
                 task.get('task', ''),
+                task_category,
                 task.get('deadline', ''),
                 task.get('priority', 'Medium'),
                 display_completed
@@ -788,14 +910,33 @@ class TodoApp:
 
             # Add task to tree with appropriate styling
             try:
-                self.tree.insert('', 'end', iid=task_id, values=display_values)
+                # Check for overdue
+                tags = ()
+                if not task_completed:
+                    try:
+                        d = datetime.strptime(task.get('deadline', ''), "%d-%m-%Y").date()
+                        if d < date.today():
+                            tags = ('overdue',)
+                        elif d == date.today():
+                            tags = ('due_today',)
+                    except: pass
+                
+                self.tree.insert('', 'end', iid=task_id, values=display_values, tags=tags)
             except tk.TclError as e:
-                print(f"Error inserting task {task_id} into treeview: {e}")
+                print(f"Error inserting task {task_id}: {e}")
+        
+        # Configure tag colors
+        self.tree.tag_configure('overdue', foreground='#EF4444') # Red
+        self.tree.tag_configure('due_today', foreground='#F59E0B') # Orange
 
     def clear_inputs(self):
         self.task_entry.delete(0, tk.END)
         self.cal.set_date(date.today())
         self.priority_combo.set("Medium")
+        if hasattr(self, 'category_combo'):
+            self.category_combo.set("General")
+            if "General" not in self.categories and self.categories:
+                self.category_combo.set(self.categories[0])
         self.update_priority_style()
         self.task_entry.focus() # Set focus back to task entry
 
@@ -891,7 +1032,23 @@ class TodoApp:
         # Prevent Enter from triggering save
         cal.bind('<Return>', lambda e: 'break')
         # Add Tab key binding to move to next field
-        cal.bind('<Tab>', lambda e: priority_combo.focus_set())
+        cal.bind('<Tab>', lambda e: category_combo.focus_set())
+
+        # Category input with more space
+        category_label = ttk.Label(main_frame, text="Category:", style='TLabel', font=('Segoe UI', 11, 'bold'))
+        category_label.pack(anchor='w', pady=(0, 8))
+        
+        category_combo = ttk.Combobox(main_frame, values=self.categories, 
+                                    state='readonly', style='TCombobox', width=30)
+        category_combo.pack(fill='x', pady=(0, 25))
+        category_combo.set(task_to_edit.get('category', 'General'))
+        if "General" not in self.categories and not category_combo.get() and self.categories:
+             category_combo.set(self.categories[0])
+
+        # Prevent Enter from triggering save
+        category_combo.bind('<Return>', lambda e: 'break')
+        # Add Tab key binding to move to next field
+        category_combo.bind('<Tab>', lambda e: priority_combo.focus_set())
 
         # Priority input with more space
         priority_label = ttk.Label(main_frame, text="Priority:", style='TLabel', font=('Segoe UI', 11, 'bold'))
@@ -949,11 +1106,13 @@ class TodoApp:
                     'task': new_task_text,
                     'deadline': new_deadline_str,
                     'priority': new_priority,
+                    'category': category_combo.get(),
                     'completed': new_completed
                 })
                 self.save_tasks()
                 self.update_treeview()
                 self.update_status()
+                self.update_dashboard()
                 edit_dialog.destroy()
             else:
                 messagebox.showerror("Error", "Task could not be found for saving.", parent=edit_dialog)
@@ -970,6 +1129,7 @@ class TodoApp:
         # Update tooltips to show new shortcuts
         self.create_tooltip(task_entry, "Edit the task description\nTab to move to next field")
         self.create_tooltip(cal, "Change the task deadline\nTab to move to next field")
+        self.create_tooltip(category_combo, "Change the task category\nTab to move to next field")
         self.create_tooltip(priority_combo, "Change the task priority\nTab to move to next field")
         self.create_tooltip(completed_cb, "Toggle completion status\nTab to move to next field")
         self.create_tooltip(save_button, "Save changes (Ctrl+S)")
