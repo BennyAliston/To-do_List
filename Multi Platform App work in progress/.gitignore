@@ -1,0 +1,18 @@
+# Flet / Flutter / Python
+build/
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# Local App Data
+tasks.json
+
+# Flet specific temp files
+.flet/
+
+# Flutter generated files (if any occur in root)
+.flutter-plugins
+.flutter-plugins-dependencies
+.dart_tool/
