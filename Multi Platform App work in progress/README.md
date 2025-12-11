@@ -42,7 +42,6 @@ Habito-do is ready to be compiled into an APK for Android devices.
 flet build apk --product-name "Habito-do"
 ```
 
-> For a detailed step-by-step verification guide, please read [APK_Guide.md](APK_Guide.md).
 
 ## 📂 Project Structure
 
